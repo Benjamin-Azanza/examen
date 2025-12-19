@@ -8,3 +8,8 @@ Route::get('/', function () {
 });
 
 Route::resource('prestamos', PrestamoController::class);
+
+Route::put(
+    'prestamos/{prestamo}/devolver',
+    [PrestamoController::class, 'devolver']
+)->name('prestamos.devolver');

@@ -21,7 +21,7 @@
     <thead class="table-dark">
         <tr>
             <th>ID</th>
-            <th>Título del libro</th>
+            <th>Título</th>
             <th>Persona</th>
             <th>Fecha límite</th>
             <th>Estado</th>
@@ -49,16 +49,27 @@
                 </a>
 
                 @if(!$prestamo->devuelto)
-                <form action="{{ route('prestamos.destroy', $prestamo) }}"
+                <form action="{{ route('prestamos.devolver', $prestamo) }}"
                       method="POST"
                       style="display:inline">
                     @csrf
-                    @method('DELETE')
-                    <button class="btn btn-sm btn-danger">
+                    @method('PUT')
+                    <button class="btn btn-sm btn-success">
                         Devolver
                     </button>
                 </form>
                 @endif
+
+                <form action="{{ route('prestamos.destroy', $prestamo) }}"
+                      method="POST"
+                      style="display:inline"
+                      onsubmit="return confirm('¿Eliminar definitivamente?')">
+                    @csrf
+                    @method('DELETE')
+                    <button class="btn btn-sm btn-danger">
+                        Eliminar
+                    </button>
+                </form>
             </td>
         </tr>
         @empty

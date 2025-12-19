@@ -9,7 +9,7 @@ class PrestamoController extends Controller
 {
     public function index()
     {
-        $prestamos = Prestamo::orderBy('id', 'asc')->get();
+        $prestamos = Prestamo::orderBy('created_at', 'desc')->get();
         return view('prestamos.index', compact('prestamos'));
     }
 
@@ -20,19 +20,9 @@ class PrestamoController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'titulo_libro'    => 'required|max:150',
-            'nombre_persona' => 'required|max:100',
-            'fecha_limite'   => 'required|date',
-        ]);
+        $data = $request->validate(Prestamo::rules());
 
-        Prestamo::create([
-            'titulo_libro'    => $request->titulo_libro,
-            'nombre_persona' => $request->nombre_persona,
-            'telefono'       => $request->telefono,
-            'fecha_limite'   => $request->fecha_limite,
-            'devuelto'       => false,
-        ]);
+        Prestamo::crear($data);
 
         return redirect()->route('prestamos.index')
             ->with('success', 'Préstamo registrado correctamente');
@@ -45,18 +35,9 @@ class PrestamoController extends Controller
 
     public function update(Request $request, Prestamo $prestamo)
     {
-        $request->validate([
-            'titulo_libro'    => 'required|max:150',
-            'nombre_persona' => 'required|max:100',
-            'fecha_limite'   => 'required|date',
-        ]);
+        $data = $request->validate(Prestamo::rules());
 
-        $prestamo->update([
-            'titulo_libro'    => $request->titulo_libro,
-            'nombre_persona' => $request->nombre_persona,
-            'telefono'       => $request->telefono,
-            'fecha_limite'   => $request->fecha_limite,
-        ]);
+        $prestamo->editar($data);
 
         return redirect()->route('prestamos.index')
             ->with('success', 'Préstamo actualizado correctamente');
@@ -64,9 +45,17 @@ class PrestamoController extends Controller
 
     public function destroy(Prestamo $prestamo)
     {
-        $prestamo->update(['devuelto' => true]);
+        $prestamo->delete();
 
         return redirect()->route('prestamos.index')
-            ->with('success', 'Préstamo marcado como devuelto');
+            ->with('success', 'Préstamo eliminado definitivamente');
+    }
+
+    public function devolver(Prestamo $prestamo)
+    {
+        $prestamo->devolver();
+
+        return redirect()->route('prestamos.index')
+            ->with('success', 'Libro marcado como devuelto');
     }
 }
